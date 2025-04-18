@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:skeleton/base/presentation/icons/icon_asset.dart';
-import 'package:skeleton/route/mezisan_order_routes.dart';
+import 'package:skeleton/route/my_routes.dart';
 
-class OrderSplashScreenPage extends StatefulWidget {
-  const OrderSplashScreenPage({super.key});
+class SplashScreenPage extends StatefulWidget {
+  const SplashScreenPage({super.key});
 
   @override
-  State<OrderSplashScreenPage> createState() => _OrderSplashScreenPageState();
+  State<SplashScreenPage> createState() => _SplashScreenPageState();
 }
 
-class _OrderSplashScreenPageState extends State<OrderSplashScreenPage> {
+class _SplashScreenPageState extends State<SplashScreenPage> {
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      QR.navigator.replace(MezisanOrderRoutes.rootPath, MezisanOrderRoutes.mainPagePath);
+      // QR.replace(MyRoutes.rootPath, MyRoutes.mainPagePath);
     });
   }
 
