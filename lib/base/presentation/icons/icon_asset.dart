@@ -17,4 +17,7 @@ class IconAsset {
       'assets/icon/mj_splash_screen.jpg';
   static const String mezisanOrderMainIcon =
       'assets/icon/order_main.svg';
+
+  static const String merchantedLogo =
+      'assets/icon/order_main.svg';
 }

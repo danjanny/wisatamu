@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:qlevar_router/qlevar_router.dart';
-import 'package:skeleton/base/core/app_config.dart';
-import 'package:skeleton/base/presentation/appbar/quickcount_home_app_bar.dart';
-import 'package:skeleton/base/presentation/icons/icon_asset.dart';
-import 'package:skeleton/base/presentation/styles/text_styles.dart';
-import '../../../base/presentation/textformfield/app_colors.dart';
-import '../../../route/routes.dart';
+
+import '../../domain/entities/product.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,221 +11,129 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  final List<Product> products = [
+    Product(
+        name: 'Product 1',
+        price: 10.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 2',
+        price: 20.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 3',
+        price: 30.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 4',
+        price: 40.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 5',
+        price: 50.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 6',
+        price: 60.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 7',
+        price: 70.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 8',
+        price: 80.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 9',
+        price: 90.0,
+        imageUrl: 'https://placehold.co/50x50'),
+    Product(
+        name: 'Product 10',
+        price: 100.0,
+        imageUrl: 'https://placehold.co/50x50'),
+  ];
 
-  @override
-  void dispose() {
-    super.dispose();
+  int cartItemCount = 0;
+
+  void addToCart() {
+    setState(() {
+      cartItemCount++;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return PopScope(
-          onPopInvokedWithResult: (_, __) {
-            if (QR.history.length > 0) {
-              QR.history.clear();
-            }
-
-            SystemNavigator.pop();
-          },
-          child: Scaffold(
-            appBar: const QuickcountHomeAppBar(),
-            body: SingleChildScrollView(
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Dimsum Adeenio'),
+        ),
+        body: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 100.0),
+              child: ListView(
+                children: [
+                  ...products.map((product) {
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 8.0),
+                      child: ListTile(
+                        leading: SvgPicture.network(
+                          product.imageUrl ?? '',
+                          fit: BoxFit.cover,
+                        ),
+                        title: Text(product.name ?? 'Item'),
+                        subtitle: Text('Rp ${product.price}'),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.add_shopping_cart),
+                          onPressed: addToCart,
+                        ),
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('${product.name} tapped')),
+                          );
+                        },
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
               child: Container(
+                padding: EdgeInsets.all(16.0),
                 color: Colors.white,
-                padding: const EdgeInsets.only(top: 8, left: 16, right: 16),
                 child: Column(
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Menu Utama',
-                        style: TextStyles.heading24Bold.copyWith(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    MenuCardItem(
-                      iconPath: IconAsset.inputHasilPilkadaIcon,
-                      title: 'Input Hasil Pilkada',
-                      subtitle: 'Kirim hasil perhitungan cepat',
-                      onTap: () {
-                        QR.to(AppRoutes.inputResultPath);
-                      },
-                    ),
-                    const SizedBox(height: 19),
-                    MenuCardItem(
-                      iconPath: IconAsset.editProfileIcon,
-                      title: 'Edit Profil',
-                      subtitle:
-                          'Perbaharui data anda atau ubah jika terdapat kesalahan',
-                      onTap: () {
-                        QR.to(AppRoutes.editProfilePath);
-                      },
-                    ),
-                    const SizedBox(height: 19),
-                    MenuCardItem(
-                      iconPath: IconAsset.riwayatIcon,
-                      title: 'Riwayat Input',
-                      subtitle:
-                          'Periksa kembali riwayat data yang telah anda input',
-                      onTap: () {
-                        QR.to(AppRoutes.historyInputPath);
-                      },
-                    ),
-                    const SizedBox(height: 19),
-                    MenuCardItem(
-                      iconPath: IconAsset.logoutIcon,
-                      title: 'Logout',
-                      subtitle: 'Keluar ke menu awal',
-                      onTap: () {
-                        logout(context);
-                      },
-                    ),
-                    const SizedBox(height: 38),
-                    Column(
-                      children: [
-                        Text(
-                          'powered by',
-                          style: TextStyles.body16Regular
-                              .copyWith(height: 20 / 16, color: AppColors.grey),
-                        ),
-                        const SizedBox(height: 4),
-                        Image.asset(
-                          AppConfig.companyIcon,
-                          width: 200,
-                          height: 35,
-                        ),
-                      ],
-                    ),
+                    TextField(
+                      decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.search),
+                          hintText: 'Search',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.circular(8.0))),
+                    )
                   ],
                 ),
               ),
             ),
-            backgroundColor: Colors.white,
-          ),
-        );
-      },
-    );
-  }
-
-  void logout(BuildContext context) async {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Yakin keluar kembali ke halaman awal?'),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        side: const BorderSide(
-                            color: AppColors.primaryColor, width: 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Batalkan',
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryColor,
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      onPressed: () async {
-                        var box = Hive.box('settings');
-                        await box.put('isLogin', false);
-                        QR.navigator.popUntilOrPush(AppRoutes.rootPath);
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Yakin'),
-                    ),
-                  ),
-                ],
+            cartItemCount > 0
+                ? Positioned(
+              bottom: 16,
+              right: 16,
+              child: FloatingActionButton.extended(
+                onPressed: () {},
+                label: Text('$cartItemCount item'),
+                icon: const Icon(Icons.shopping_cart),
               ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class MenuCardItem extends StatelessWidget {
-  final String? iconPath;
-  final String? title;
-  final String? subtitle;
-  final VoidCallback? onTap;
-
-  const MenuCardItem(
-      {super.key, this.iconPath, this.title, this.subtitle, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 13.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: AppColors.grey2,
-            width: 0.5,
-          ),
-        ),
-        child: Row(
-          children: [
-            SvgPicture.asset(
-              iconPath ?? '',
-              width: 50,
-              height: 50,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title ?? '',
-                    style: TextStyles.body16Bold.copyWith(color: Colors.black),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle ?? '',
-                    style: TextStyles.body14Regular
-                        .copyWith(color: AppColors.grey),
-                  ),
-                ],
-              ),
-            ),
+            )
+                : Container()
           ],
-        ),
-      ),
-    );
+        ));
   }
 }
